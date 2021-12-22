@@ -1,0 +1,12 @@
+{
+	"name": "dst_sql_dummy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "unstatisticsqlkkdevlinkedservices",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

@@ -43,20 +43,11 @@
 						"type": "TabularTranslator",
 						"mappings": [
 							{
-								"sink": {
-									"name": "FileName",
+								"source": {
+									"name": "Region",
 									"type": "String",
-									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"sink": {
-									"name": "SourceItemId",
-									"type": "Int32",
-									"physicalType": "int"
-								}
-							},
-							{
+									"physicalType": "String"
+								},
 								"sink": {
 									"name": "RegionName",
 									"type": "String",
@@ -64,6 +55,11 @@
 								}
 							},
 							{
+								"source": {
+									"name": "Sub Region",
+									"type": "String",
+									"physicalType": "String"
+								},
 								"sink": {
 									"name": "SubRegionName",
 									"type": "String",
@@ -71,6 +67,11 @@
 								}
 							},
 							{
+								"source": {
+									"name": "Country",
+									"type": "String",
+									"physicalType": "String"
+								},
 								"sink": {
 									"name": "CountryName",
 									"type": "String",
@@ -99,34 +100,6 @@
 									"name": "Count",
 									"type": "String",
 									"physicalType": "nvarchar"
-								}
-							},
-							{
-								"sink": {
-									"name": "sysCreatedAt",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"sink": {
-									"name": "sysChangedAt",
-									"type": "DateTime",
-									"physicalType": "datetime"
-								}
-							},
-							{
-								"sink": {
-									"name": "sysChangedBy",
-									"type": "Int32",
-									"physicalType": "int"
-								}
-							},
-							{
-								"sink": {
-									"name": "sysCreatedBy",
-									"type": "Int32",
-									"physicalType": "int"
 								}
 							}
 						],
@@ -205,7 +178,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Copy uncrime",
+						"activity": "Update Filename",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -255,6 +228,41 @@
 				"linkedServiceName": {
 					"referenceName": "unstatisticsqlkkdevlinkedservices",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Update Filename",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy uncrime",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@replace('UPDATE [staging].[uncrime_untyped]\n  SET [FileName] = ''variablefilename''\n  WHERE [FileName] IS NULL\nSELECT 1;'\n, 'variablefilename'\n,pipeline().parameters.FileName\n)",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "dst_sql_dummy",
+						"type": "DatasetReference"
+					}
 				}
 			}
 		],
