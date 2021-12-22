@@ -302,6 +302,23 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
+						"activity": "Set variable PipelineExecutionDescription",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "PipelineExecutionStatus",
+					"value": "failed"
+				}
+			},
+			{
+				"name": "Set variable PipelineExecutionDescription",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
 						"activity": "Copy countries to SQL",
 						"dependencyConditions": [
 							"Failed"
@@ -310,8 +327,11 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "PipelineExecutionStatus",
-					"value": "failed"
+					"variableName": "PipelineExecutionDescription",
+					"value": {
+						"value": "@{activity('Copy countries to SQL').Error.Message}",
+						"type": "Expression"
+					}
 				}
 			}
 		],
