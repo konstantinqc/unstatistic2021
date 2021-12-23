@@ -112,7 +112,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM [adf].[usp_Configuration_Get]",
+							"value": "SELECT 1;",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
