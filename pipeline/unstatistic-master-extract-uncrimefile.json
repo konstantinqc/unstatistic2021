@@ -111,7 +111,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[adf].[usp_Configuration_Get]",
+						"sqlReaderQuery": {
+							"value": "SELECT * FROM [adf].[usp_Configuration_Get]",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
