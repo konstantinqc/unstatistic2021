@@ -118,7 +118,8 @@
 					"dataset": {
 						"referenceName": "dst_sql_dummy",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": true
 				}
 			},
 			{
@@ -189,7 +190,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "  TRUNCATE TABLE [staging].[uncrime_untyped];\nSELECT 1;",
+						"sqlReaderQuery": "TRUNCATE TABLE [staging].[uncrime_untyped];\nSELECT 1;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
