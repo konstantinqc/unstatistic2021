@@ -43,7 +43,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "ForEach1",
+						"activity": "ForEach other pipelines",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -238,7 +238,7 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "ForEach other pipelines",
 				"type": "ForEach",
 				"dependsOn": [
 					{
