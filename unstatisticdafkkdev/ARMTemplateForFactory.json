@@ -18,6 +18,14 @@
 		"unstatisticstac_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'unstatisticstac'"
+		},
+		"unstatisticsqlskkdev_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://unstatistickyvtkkdev.vault.azure.net/"
+		},
+		"msbiazurelinkedservicekeyvault_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "unstatisticdvh-connectionstring"
 		}
 	},
 	"variables": {
@@ -3943,6 +3951,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/unstatisticsqlskkdev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('unstatisticsqlskkdev_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/unstatisticstac')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3988,6 +4009,28 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/first_pipeline')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/msbiazurelinkedservicekeyvault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "unstatisticsqlskkdev",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('msbiazurelinkedservicekeyvault_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlskkdev')]"
 			]
 		}
 	]

@@ -18,6 +18,14 @@
 		"unstatisticstac_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'unstatisticstac'"
+		},
+		"unstatisticsqlskkdev_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://unstatistickyvtkkdev.vault.azure.net/"
+		},
+		"msbiazurelinkedservicekeyvault_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "unstatisticdvh-connectionstring"
 		}
 	},
 	"variables": {
@@ -46,6 +54,19 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('unstatisticsqlkkdevlinkedservices_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/unstatisticsqlskkdev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('unstatisticsqlskkdev_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -1028,6 +1049,28 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/unstatisticstac')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/msbiazurelinkedservicekeyvault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "unstatisticsqlskkdev",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('msbiazurelinkedservicekeyvault_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlskkdev')]"
 			]
 		},
 		{
@@ -3403,382 +3446,6 @@
 				"[concat(variables('factoryId'), '/datasets/dst_sql_uncrime_untyped')]",
 				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlkkdevlinkedservices')]",
 				"[concat(variables('factoryId'), '/datasets/dst_sql_dummy')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/unstatistic-master-extract-uncrimefile')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "SP Log Pipeline start",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[adf].[usp_PipelineExecutionHistory_Create]",
-							"storedProcedureParameters": {
-								"PipelineName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"PipelineRunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "unstatisticsqlkkdevlinkedservices",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "SP Log Pipeline End",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "ForEach other pipelines",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[adf].[usp_PipelineExecutionHistory_Update]",
-							"storedProcedureParameters": {
-								"Description": {
-									"value": "desc1",
-									"type": "String"
-								},
-								"PipelineName": {
-									"value": {
-										"value": "@pipeline().Pipeline",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"PipelineRunId": {
-									"value": {
-										"value": "@pipeline().RunId",
-										"type": "Expression"
-									},
-									"type": "String"
-								},
-								"Status": {
-									"value": "completed",
-									"type": "String"
-								}
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "unstatisticsqlkkdevlinkedservices",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Get configuration",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "SP Log Pipeline start",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[adf].[usp_Configuration_Get]",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "dst_sql_dummy",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": true
-						}
-					},
-					{
-						"name": "Set container",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Get configuration",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "container",
-							"value": {
-								"value": "@activity('Get configuration').output.firstrow.container",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "Set path",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Get configuration",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "filepath",
-							"value": {
-								"value": "@activity('Get configuration').output.firstrow.UNCrimepath",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "Truncate  uncrime_untyped",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Set container",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Set path",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "TRUNCATE TABLE [staging].[uncrime_untyped];\nSELECT 1;",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "dst_sql_dummy",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "Get Metadata1",
-						"type": "GetMetadata",
-						"dependsOn": [
-							{
-								"activity": "Truncate  uncrime_untyped",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "ds_src_csv_metadata",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach other pipelines",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get Metadata1').output.childitems",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"activities": [
-								{
-									"name": "Set filename",
-									"type": "SetVariable",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "filename",
-										"value": {
-											"value": "@{item().name}",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "unstatistic-extract-uncrimefile",
-									"type": "ExecutePipeline",
-									"dependsOn": [
-										{
-											"activity": "Set filename",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "unstatistic-extract-uncrimefile",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {
-											"Container": {
-												"value": "@variables('container')",
-												"type": "Expression"
-											},
-											"Path": {
-												"value": "@variables('filepath')",
-												"type": "Expression"
-											},
-											"FileName": {
-												"value": "@variables('filename')",
-												"type": "Expression"
-											}
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"container": {
-						"type": "String"
-					},
-					"filepath": {
-						"type": "String"
-					},
-					"filename": {
-						"type": "String"
-					}
-				},
-				"folder": {
-					"name": "unstatistic"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/unstatisticsqlkkdevlinkedservices')]",
-				"[concat(variables('factoryId'), '/datasets/dst_sql_dummy')]",
-				"[concat(variables('factoryId'), '/datasets/ds_src_csv_metadata')]",
-				"[concat(variables('factoryId'), '/pipelines/unstatistic-extract-uncrimefile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/first_trigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "first_pipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2021-12-22T05:08:00Z",
-						"timeZone": "UTC",
-						"schedule": {
-							"hours": [
-								15
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/first_pipeline')]"
 			]
 		}
 	]

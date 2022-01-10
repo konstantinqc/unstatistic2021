@@ -13,6 +13,12 @@
 		},
 		"unstatisticstac_connectionString": {
 			"value": ""
+		},
+		"unstatisticsqlskkdev_properties_typeProperties_baseUrl": {
+			"value": "https://unstatistickyvtkkdev.vault.azure.net/"
+		},
+		"msbiazurelinkedservicekeyvault_properties_typeProperties_connectionString_secretName": {
+			"value": "unstatisticdvh-connectionstring"
 		}
 	}
 }
