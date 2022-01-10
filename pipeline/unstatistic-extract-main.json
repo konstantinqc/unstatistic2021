@@ -169,7 +169,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"message": "unstatistic-extract-countries pipeline failed"
+					"message": "unstatistic-extract-countries pipeline failed",
+					"errorCode": "101"
 				}
 			}
 		],
