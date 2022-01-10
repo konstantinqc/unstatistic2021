@@ -1,0 +1,10 @@
+{
+	"name": "unstatisticsqlskkdev",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://unstatistickyvtkkdev.vault.azure.net/"
+		}
+	}
+}
